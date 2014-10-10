@@ -32,7 +32,7 @@
 
     # Make sure both programs are seen as started
     - supervisorctl:
-        config: "{{ supervisord_configuration_file }}"
+        config: "{{ supervisord_conf_file }}"
         name: "{{ item }}"
         state: started
       with_items:

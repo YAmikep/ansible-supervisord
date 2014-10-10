@@ -21,7 +21,7 @@
 
   post_tasks:
     - supervisorctl:
-        config: "{{ supervisord_configuration_file }}"
+        config: "{{ supervisord_conf_file }}"
         name: example_daemon
         state: started
       # Retry until it's really started
@@ -34,7 +34,7 @@
       shell: echo "bye bye" | nc localhost 1025
 
     - supervisorctl:
-        config: "{{ supervisord_configuration_file }}"
+        config: "{{ supervisord_conf_file }}"
         name: example_daemon
         state: started
 

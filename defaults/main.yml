@@ -1,10 +1,33 @@
 # For description of those options see README.md
-supervisord_instance_name: "default"
-supervisord_configuration_file: "/etc/supervisord-{{ supervisord_instance_name }}.conf"
-supervisord_logfile: "/var/log/supervisor/{{ supervisord_instance_name }}.log"
+supervisor_version: "3.1.2"
+
+supervisord_instance_name: "supervisord"
+supervisord_socket: "/var/run/{{ supervisord_instance_name }}.sock"
+supervisord_pid_file: "/var/run/{{ supervisord_instance_name }}.pid"
+
+supervisord_conf_dir: "/etc/supervisor"
+supervisord_conf_include_dir: "{{ supervisord_conf_dir }}/conf.d"
+supervisord_conf_file: "{{ supervisord_conf_dir }}/{{ supervisord_instance_name }}.conf"
+
+supervisor_bin_dir: "/usr/local/bin"
+supervisord_bin: "{{ supervisor_bin_dir }}/supervisord"
+
+# Set max opened files (set blank to default limits)
+supervisord_nofile: 65356
+
+supervisord_log_dir: "/var/log/supervisor"
+supervisord_log_file: "{{ supervisord_log_dir }}/{{ supervisord_instance_name }}.log"
+
 supervisord_user: no
 supervisord_environment: {}
 supervisord_identifier: "{{ supervisord_instance_name }}"
 supervisord_programs: []
-supervisord_disable_distro_init: yes
-supervisord_extra_config: {}
+
+supervisord_extra_config: {
+    include: {
+        files: "{{supervisord_conf_include_dir}}/*.conf"
+    }
+}
+
+# Install superlance (http://superlance.readthedocs.org/)
+supervisor_superlance: no

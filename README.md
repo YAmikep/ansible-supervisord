@@ -25,18 +25,19 @@ None of them are required, but you probably want to set ``supervisord_programs``
 **Escape warning**: most options need "%" escaped as "%%", as supervisord uses %(var_name)s for variable substitution.
 
 
-    supervisord_instance_name: "default"
+    supervisord_instance_name: "supervisord"
 
 This name will be used in default paths, and for init script names (this will be the name of the created system service).
 If you need multiple supervisor daemons, that's how they are told apart.
 
 
-    supervisord_configuration_file: "/etc/supervisord-{{ supervisord_instance_name }}.conf"
+    supervisord_log_dir: "/var/log/supervisor"
+    supervisord_log_file: "{{ supervisord_log_dir }}/{{ supervisord_instance_name }}.log"
 
 Where to put this instance's configuration.
 
 
-    supervisord_logfile: "/var/log/supervisor/{{ supervisord_instance_name }}.log"
+    supervisord_log_file: "/var/log/supervisor/{{ supervisord_instance_name }}.log"
 
 Main log file location.
 
@@ -134,7 +135,7 @@ When using this role as a dependency, you'll probably want to pass your role's n
       supervisorctl:
         name: my_app-web
         state: restarted
-        config: "{{ supervisord_configuration_file }}"
+        config: "{{ supervisord_conf_file }}"
 
 One warning though - if you use supervisorctl with state=started just after reloaading/restarting supervisord
 it might throw strange looking errors like ``ERROR (already started)``.

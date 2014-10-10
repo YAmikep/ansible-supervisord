@@ -1,23 +1,32 @@
-- name: Install Supervisor
-  apt: name=supervisor
+---
 
-- name: Stop supervisor and disable the default init script
-  service: name=supervisor enabled=no state=stopped
-  when: supervisord_disable_distro_init | bool
-# TODO: a better workaround. Service always reports "changed" which breaks tests.
-# See https://github.com/ansible/ansible/pull/7977
-  changed_when: no
+- name: Install dependencies
+  apt: pkg=python-pip
+  when: ansible_os_family == 'Debian'
 
-- name: Prepare the log dir
-  file: dest=/var/log/supervisor-{{ supervisord_instance_name }} state=directory
+- name: Install supervisor
+  pip: name=supervisor version={{ supervisor_version }}
+  notify:
+    - restart {{ supervisord_instance_name }}
+
+- name: Install superlance
+  pip: name=superlance
+  when: supervisor_superlance
+
+- name: Prepare directories
+  file: state=directory path={{item}}
+  with_items:
+    - "{{ supervisord_conf_dir }}"
+    - "{{ supervisord_conf_include_dir }}"
+    - "{{ supervisord_log_dir }}"
 
 - name: Create init script
-  template: src=upstart.j2 dest=/etc/init/{{ supervisord_instance_name }}.conf
+  template: src=upstart.j2 dest=/etc/init/{{ supervisord_instance_name }}.conf owner=root group=root mode=0644
   notify:
     - restart {{ supervisord_instance_name }}
 
 - name: Create configuration
-  template: src=supervisord.conf.j2 dest={{ supervisord_configuration_file }}
+  template: src=supervisord.conf.j2 dest={{ supervisord_conf_file }} owner=root group=root mode=0644
   notify:
     - reload {{ supervisord_instance_name }}
 

@@ -40,16 +40,16 @@
 
 {% call section("unix_http_server") %}
 ; (the path to the socket file)
-file=/var/run/supervisor-{{ supervisord_instance_name }}.sock
+file={{ supervisord_socket }}
 {% endcall %}
 
 {% call section("supervisord") %}
 ; (main log file;default $CWD/supervisord.log)
-logfile={{ supervisord_logfile }}
+logfile={{ supervisord_log_file }}
 ; (supervisord pidfile;default supervisord.pid)
-pidfile=/var/run/supervisord-{{ supervisord_instance_name }}.pid
+pidfile={{ supervisord_pid_file }}
 ; ('AUTO' child log dir, default $TEMP)
-childlogdir=/var/log/supervisor-{{ supervisord_instance_name }}
+childlogdir={{ supervisord_log_dir }}
 {% if supervisord_environment %}
 environment={{ build_environment(supervisord_environment) }}
 {% endif %}
@@ -64,7 +64,7 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
 {% call section("supervisorctl") %}
 ; use a unix:// URL  for a unix socket
-serverurl=unix:///var/run/supervisor-{{ supervisord_instance_name }}.sock
+serverurl=unix://{{ supervisord_socket }}
 {% endcall %}
 
 {%- for program in supervisord_programs %}
