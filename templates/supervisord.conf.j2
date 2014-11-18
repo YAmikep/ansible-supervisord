@@ -72,10 +72,17 @@ serverurl=unix://{{ supervisord_socket }}
                        else 'program' %}
 
 {% call section(_program_kind ~ ":" ~ program.name) %}
-{{ value_pairs(program, ignore=['environment']) -}}
+{{ value_pairs(program, ignore=['name', 'environment']) -}}
 {% if 'environment' in program %}
 environment={{ build_environment(program.environment) }}
 {% endif %}
+{% endcall %}
+{% endfor %}
+
+{%- for event in supervisord_events %}
+
+{% call section("eventlistener" ~ ":" ~ event.name) %}
+{{ value_pairs(event, ignore=['name']) -}}
 {% endcall %}
 {% endfor %}
 
