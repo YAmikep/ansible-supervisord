@@ -13,6 +13,7 @@ limit nofile {{supervisord_nofile}} {{supervisord_nofile}}
 respawn
 respawn limit 10 5
 
+# If you use Upstart 1.4 or newer, put console log into your Upstart job and all the output to stdout/stderr will end up to /var/log/upstart/<job>.log
 console log
 
 exec {{ supervisord_bin }} -c {{ supervisord_conf_file }} --nodaemon
